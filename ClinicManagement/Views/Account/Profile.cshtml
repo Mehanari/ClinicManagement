@@ -1,0 +1,33 @@
+﻿@model ClinicManagement.Models.ViewModels.ProfileViewModel
+
+@{
+    ViewData["Title"] = "Профіль користувача";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2 class="mb-4">Профіль</h2>
+            <div class="card">
+                <div class="card-body">
+                    <p class="card-text"><strong>Логін:</strong> @Model.Login</p>
+                    <p class="card-text"><strong>Роль:</strong> @Model.Role</p>
+                    <h3 class="mt-4">Персональні дані</h3>
+                    @if (Model.PersonalInfo != null)
+                    {
+                        <p class="card-text"><strong>Ім’я:</strong> @Model.PersonalInfo.Name</p>
+                        <p class="card-text"><strong>Прізвище:</strong> @Model.PersonalInfo.Surname</p>
+                        <p class="card-text"><strong>По батькові:</strong> @Model.PersonalInfo.Patronymic</p>
+                        <p class="card-text"><strong>Дата народження:</strong> @Model.PersonalInfo.DateOfBirth.ToString("dd.MM.yyyy")</p>
+                        <p class="card-text"><strong>Стать:</strong> @Model.PersonalInfo.Gender?.Name</p>
+                    }
+                    else
+                    {
+                        <p class="card-text">Персональні дані відсутні.</p>
+                    }
+                    <a asp-action="Logout" class="btn btn-danger mt-3">Вийти</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

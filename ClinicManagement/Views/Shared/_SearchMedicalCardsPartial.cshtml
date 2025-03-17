@@ -1,0 +1,84 @@
+﻿@model ClinicManagement.Models.ViewModels.SearchMedicalCardViewModel
+
+@{
+    var showCreateButton = ViewData["ShowCreateButton"] as bool? ?? false;
+    var controllerName = ViewData["ControllerName"] as string ?? "Registrar";
+}
+
+<div class="card">
+    <div class="card-body">
+        <form asp-controller="@controllerName" asp-action="SearchMedicalCards" method="post">
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <label asp-for="Name" class="form-label">Ім’я</label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label asp-for="Surname" class="form-label">Прізвище</label>
+                    <input asp-for="Surname" class="form-control" />
+                    <span asp-validation-for="Surname" class="text-danger"></span>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label asp-for="Patronymic" class="form-label">По батькові</label>
+                    <input asp-for="Patronymic" class="form-control" />
+                    <span asp-validation-for="Patronymic" class="text-danger"></span>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label asp-for="Number" class="form-label">Номер картки</label>
+                    <input asp-for="Number" type="number" class="form-control" />
+                    <span asp-validation-for="Number" class="text-danger"></span>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Пошук</button>
+        </form>
+    </div>
+</div>
+
+@if (Model.Results.Any())
+{
+    <table class="table table-striped mt-3">
+        <thead>
+            <tr>
+                <th>Номер картки</th>
+                <th>ПІБ</th>
+                <th>Місце роботи</th>
+                <th>Адреса</th>
+                <th>Email</th>
+                <th>Телефон</th>
+                <th>Останній діагноз</th>
+                @if (showCreateButton)
+                {
+                    <th>Дії</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var card in Model.Results)
+            {
+                var personalInfo = Model.PersonalInfos.ContainsKey(card.PersonalInfoId) ? Model.PersonalInfos[card.PersonalInfoId] : null;
+                <tr>
+                    <td>@card.Number</td>
+                    <td>@(personalInfo != null ? $"{personalInfo.Surname} {personalInfo.Name} {personalInfo.Patronymic}" : "Невідомо")</td>
+                    <td>@card.Workplace</td>
+                    <td>@card.Address</td>
+                    <td>@card.Email</td>
+                    <td>@card.Phone</td>
+                    <td>@(card.LastDiagnosis ?? "Немає")</td>
+                    @if (showCreateButton)
+                    {
+                        <td>
+                            <a class="btn btn-sm btn-primary" asp-controller="@controllerName" asp-action="CreateAppointment" asp-route-id="@card.Number">Створити запис</a>
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else if (!string.IsNullOrEmpty(Model.Name) || !string.IsNullOrEmpty(Model.Surname) || !string.IsNullOrEmpty(Model.Patronymic) || Model.Number.HasValue)
+{
+    <div class="alert alert-info mt-3" role="alert">
+        Картки не знайдені.
+    </div>
+}

@@ -1,0 +1,83 @@
+﻿@using ClinicManagement.Models.Entities
+@model ClinicManagement.Models.ViewModels.ViewScheduleViewModel
+
+@{
+    ViewData["Title"] = "Перегляд розкладу";
+    var doctorSpecialities = ViewData["DoctorSpecialities"] as List<DoctorSpeciality>;
+    var personalInfos = ViewData["PersonalInfos"] as Dictionary<int, PersonalInfo>;
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <h2 class="mb-4">Розклад прийомів</h2>
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form asp-action="ViewSchedule" method="post">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="FilterDate" class="form-label">Дата</label>
+                                <input asp-for="FilterDate" type="date" class="form-control" />
+                                <span asp-validation-for="FilterDate" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="FilterSpecialityId" class="form-label">Спеціальність</label>
+                                <select asp-for="FilterSpecialityId" class="form-select">
+                                    <option value="">Усі спеціальності</option>
+                                    @foreach (var speciality in doctorSpecialities)
+                                    {
+                                        <option value="@speciality.Id">@speciality.Name</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="FilterSpecialityId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Фільтрувати</button>
+                    </form>
+                </div>
+            </div>
+
+            @if (Model.Appointments.Any())
+            {
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Пацієнт</th>
+                            <th>Спеціальність</th>
+                            <th>Початок</th>
+                            <th>Кінець</th>
+                            <th>Кабінет</th>
+                            <th>Дії</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var appointment in Model.Appointments)
+                        {
+                            var personalInfo = personalInfos.ContainsKey(appointment.CardNumber) ? personalInfos[appointment.CardNumber] : null;
+                            <tr>
+                                <td>@(personalInfo != null ? $"{personalInfo.Surname} {personalInfo.Name}" : "Невідомо")</td>
+                                <td>@appointment.DoctorSpeciality.Name</td>
+                                <td>@appointment.StartTime.ToString("dd.MM.yyyy HH:mm")</td>
+                                <td>@appointment.EndTime.ToString("dd.MM.yyyy HH:mm")</td>
+                                <td>@appointment.RoomNumber</td>
+                                <td>
+                                    <a class="btn btn-sm btn-warning" asp-action="EditAppointment" asp-controller="Registrar" asp-route-id="@appointment.Id">Перенести</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <div class="alert alert-info" role="alert">
+                    Записи на прийом не знайдені.
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

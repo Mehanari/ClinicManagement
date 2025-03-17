@@ -1,0 +1,41 @@
+﻿@model ClinicManagement.Models.ViewModels.LoginViewModel
+
+@{
+    ViewData["Title"] = "Вхід у систему";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <h2 class="text-center mb-4">Вхід</h2>
+            <div class="card">
+                <div class="card-body">
+                    <form asp-action="Login" method="post">
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label">Логін</label>
+                            <input asp-for="Email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label">Пароль</label>
+                            <input asp-for="Password" type="password" class="form-control" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <label class="form-check-label">
+                                <input asp-for="RememberMe" type="checkbox" class="form-check-input" />
+                                Запам’ятати мене
+                            </label>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Увійти</button>
+                        <div class="text-danger mt-2">@Html.ValidationSummary()</div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

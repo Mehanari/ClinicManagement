@@ -1,0 +1,20 @@
+﻿@model ClinicManagement.Models.ViewModels.SearchMedicalCardViewModel
+
+@{
+    ViewData["Title"] = "Пошук медичних карток";
+    ViewData["ShowCreateButton"] = true;
+    ViewData["ControllerName"] = "Registrar";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h2 class="mb-4">Пошук медичних карток</h2>
+            <partial name="_SearchMedicalCardsPartial" />
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,63 @@
+﻿@using ClinicManagement.Models.Entities
+@model ClinicManagement.Models.ViewModels.EditAppointmentViewModel
+
+@{
+    ViewData["Title"] = "Перенесення запису на прийом";
+    var doctorSpecialities = ViewData["DoctorSpecialities"] as List<DoctorSpeciality>;
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2 class="mb-4">Перенести запис на прийом</h2>
+            <div class="card">
+                <div class="card-body">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success" role="alert">
+                            @TempData["SuccessMessage"]
+                        </div>
+                    }
+                    <form asp-action="EditAppointment" method="post">
+                        <input type="hidden" asp-for="Id" />
+                        <div class="mb-3">
+                            <label asp-for="CardNumber" class="form-label">Номер медичної картки</label>
+                            <input asp-for="CardNumber" type="number" class="form-control" readonly />
+                            <span asp-validation-for="CardNumber" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="DoctorSpecialityId" class="form-label">Спеціальність лікаря</label>
+                            <select asp-for="DoctorSpecialityId" class="form-select">
+                                @foreach (var speciality in doctorSpecialities)
+                                {
+                                    <option value="@speciality.Id" selected="@(speciality.Id == Model.DoctorSpecialityId)">@speciality.Name</option>
+                                }
+                            </select>
+                            <span asp-validation-for="DoctorSpecialityId" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="StartTime" class="form-label">Дата і час початку</label>
+                            <input asp-for="StartTime" type="datetime-local" class="form-control" />
+                            <span asp-validation-for="StartTime" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="DurationMinutes" class="form-label">Тривалість (хвилини)</label>
+                            <input asp-for="DurationMinutes" type="number" class="form-control" />
+                            <span asp-validation-for="DurationMinutes" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="RoomNumber" class="form-label">Номер кабінету</label>
+                            <input asp-for="RoomNumber" type="number" class="form-control" />
+                            <span asp-validation-for="RoomNumber" class="text-danger"></span>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Зберегти</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
