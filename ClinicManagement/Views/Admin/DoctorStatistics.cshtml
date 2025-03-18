@@ -1,0 +1,42 @@
+﻿@model List<ClinicManagement.Models.ViewModels.DoctorStatisticViewModel>
+
+@{
+    ViewData["Title"] = "Статистика роботи лікарів";
+}
+
+<h2>Статистика роботи лікарів</h2>
+
+@if (Model.Any())
+{
+    <table class="table table-striped mt-3">
+        <thead>
+        <tr>
+            <th>ПІБ</th>
+            <th>Кількість завершених консультацій</th>
+            <th>Середня доза радіації</th>
+            <th>Найпоширеніший діагноз</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var stat in Model)
+        {
+            <tr>
+                <td>@stat.FullName</td>
+                <td>@stat.TotalAppointmentResults</td>
+                <td>@stat.AverageRadiationDose.ToString("F2")</td>
+                <td>@(string.IsNullOrEmpty(stat.MostCommonDiagnosis) ? "Немає даних" : stat.MostCommonDiagnosis)</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-info mt-3" role="alert">
+        Дані про статистику відсутні.
+    </div>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

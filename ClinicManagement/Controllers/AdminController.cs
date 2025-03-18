@@ -220,4 +220,32 @@ public class AdminController : Controller
         }
         return (doctor, user, personalInfo);
     }
+    
+    [HttpGet]
+    public async Task<IActionResult> DoctorStatistics()
+        {
+            var stats = await (from doctor in _context.Doctors
+                              join user in _context.Users on doctor.Id equals user.Id
+                              join personalInfo in _context.PersonalInfos on user.PersonalInfoId equals personalInfo.Id
+                              group new { doctor, user, personalInfo } by new
+                              {
+                                  DoctorId = doctor.Id,
+                                  FullName = "" + personalInfo.Surname + " " + personalInfo.Name + " " + personalInfo.Patronymic
+                              } into g
+                              select new DoctorStatisticViewModel
+                              {
+                                  DoctorId = g.Key.DoctorId,
+                                  FullName = g.Key.FullName,
+                                  TotalAppointmentResults = _context.AppointmentResults.Count(ar => ar.DoctorId == g.Key.DoctorId),
+                                  AverageRadiationDose = _context.AppointmentResults
+                                      .Count(ar => ar.DoctorId == g.Key.DoctorId) > 0 ? _context.AppointmentResults
+                                      .Where(ar => ar.DoctorId == g.Key.DoctorId).Average(r => r.RadiationDose) : 0,
+                                  MostCommonDiagnosis = _context.AppointmentResults
+                                      .Where(ar => ar.DoctorId == g.Key.DoctorId)
+                                      .GroupBy(ar => ar.Diagnosis)
+                                      .OrderByDescending(res => res.Count()).Select(r => r.Key).FirstOrDefault()
+                              }).ToListAsync();
+
+            return View(stats);
+        }
 }
