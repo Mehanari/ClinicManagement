@@ -1,0 +1,19 @@
+﻿@model ClinicManagement.Models.ViewModels.ViewScheduleViewModel
+
+@{
+    ViewData["Title"] = "Перегляд розкладу";
+    ViewData["ControllerName"] = "Doctor";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <h2 class="mb-4">Розклад прийомів</h2>
+            <partial name="_ViewSchedulePartial"/>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,103 @@
+﻿@model ClinicManagement.Models.ViewModels.AddAppointmentResultViewModel
+
+@{
+    ViewData["Title"] = "Додавання результату прийому";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2 class="mb-4">Додати результат прийому</h2>
+            <div class="card">
+                <div class="card-body">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success" role="alert">
+                            @TempData["SuccessMessage"]
+                        </div>
+                    }
+                    <form asp-action="AddAppointmentResult" method="post">
+                        <input type="hidden" asp-for="MedicalCardNumber" />
+                        <div class="mb-3">
+                            <label asp-for="MedicalCardNumber" class="form-label">Номер медичної картки</label>
+                            <input asp-for="MedicalCardNumber" class="form-control" readonly />
+                            <span asp-validation-for="MedicalCardNumber" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="AppointmentId" class="form-label">Запис на прийом</label>
+                            <select asp-for="AppointmentId" class="form-control" asp-items="ViewBag.Appointments">
+                                <option value="">-- Виберіть запис --</option>
+                            </select>
+                            <span asp-validation-for="AppointmentId" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Reason" class="form-label">Причина звернення</label>
+                            <textarea asp-for="Reason" class="form-control" rows="2"></textarea>
+                            <span asp-validation-for="Reason" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Anamnesis" class="form-label">Анамнез</label>
+                            <textarea asp-for="Anamnesis" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Anamnesis" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Objectively" class="form-label">Об’єктивно</label>
+                            <textarea asp-for="Objectively" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Objectively" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="RadiationDose" class="form-label">Доза опромінення (мЗв)</label>
+                            <input asp-for="RadiationDose" type="number" step="0.01" class="form-control" />
+                            <span asp-validation-for="RadiationDose" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Diagnosis" class="form-label">Діагноз</label>
+                            <textarea asp-for="Diagnosis" class="form-control" rows="2"></textarea>
+                            <span asp-validation-for="Diagnosis" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Prescription" class="form-label">Призначення</label>
+                            <textarea asp-for="Prescription" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Prescription" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Recommendations" class="form-label">Рекомендації</label>
+                            <textarea asp-for="Recommendations" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Recommendations" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Actions" class="form-label">Дії</label>
+                            <textarea asp-for="Actions" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Actions" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Conclusion" class="form-label">Висновок</label>
+                            <textarea asp-for="Conclusion" class="form-control" rows="2"></textarea>
+                            <span asp-validation-for="Conclusion" class="text-danger"></span>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Зберегти</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+@* Додамо JavaScript для заповнення ViewBag.Appointments *@
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var select = document.getElementById('AppointmentId');
+        var option = null;
+        @foreach (var appointment in Model.AvailableAppointments)
+        {
+            @:option = document.createElement('option');
+            @:option.value = '@appointment.Id';
+            @:option.text = 'Запис від @appointment.StartTime.ToString("dd.MM.yyyy HH:mm") до @appointment.EndTime.ToString("dd.MM.yyyy HH:mm")';
+            @:select.appendChild(option);
+        }
+    });
+</script>

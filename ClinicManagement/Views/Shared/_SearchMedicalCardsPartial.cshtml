@@ -2,6 +2,7 @@
 
 @{
     var showCreateButton = ViewData["ShowCreateButton"] as bool? ?? false;
+    var showDoctorButtons = ViewData["ShowDoctorButtons"] as bool? ?? false;
     var controllerName = ViewData["ControllerName"] as string ?? "Registrar";
 }
 
@@ -51,6 +52,10 @@
                 {
                     <th>Дії</th>
                 }
+                @if (showDoctorButtons)
+                {
+                    <th>Дії лікаря</th>
+                }
             </tr>
         </thead>
         <tbody>
@@ -69,6 +74,15 @@
                     {
                         <td>
                             <a class="btn btn-sm btn-primary" asp-controller="@controllerName" asp-action="CreateAppointment" asp-route-id="@card.Number">Створити запис</a>
+                        </td>
+                    }
+                    @if (showDoctorButtons)
+                    {
+                        <td>
+                            <a class="btn btn-sm btn-success" asp-controller="@controllerName" asp-action="AddAppointmentResult" asp-route-id="@card.Number">Додати результат</a>
+                            <br/>
+                            <br/>
+                            <a class="btn btn-sm btn-info" asp-controller="@controllerName" asp-action="ViewMedicalCard" asp-route-id="@card.Number">Переглянути</a>
                         </td>
                     }
                 </tr>

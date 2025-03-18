@@ -34,10 +34,10 @@
                         else if (role == "Лікар")
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-action="" asp-controller="">Пошук медичних карток</a>
+                                <a class="nav-link" asp-action="SearchMedicalCards" asp-controller="Doctor">Пошук медичних карток</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-action="" asp-controller="">Перегляд графіку</a>
+                                <a class="nav-link" asp-action="ViewSchedule" asp-controller="Doctor">Перегляд графіку</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-action="Profile" asp-controller="Account">Профіль</a>
