@@ -10,22 +10,22 @@
     <div class="card-body">
         <form asp-controller="@controllerName" asp-action="SearchMedicalCards" method="post">
             <div class="row">
-                <div class="col-md-3 mb-3">
+                <div class="col-md-3 mb-4">
                     <label asp-for="Name" class="form-label">Ім’я</label>
                     <input asp-for="Name" class="form-control" />
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
-                <div class="col-md-3 mb-3">
+                <div class="col-md-3 mb-4">
                     <label asp-for="Surname" class="form-label">Прізвище</label>
                     <input asp-for="Surname" class="form-control" />
                     <span asp-validation-for="Surname" class="text-danger"></span>
                 </div>
-                <div class="col-md-3 mb-3">
+                <div class="col-md-3 mb-4">
                     <label asp-for="Patronymic" class="form-label">По батькові</label>
                     <input asp-for="Patronymic" class="form-control" />
                     <span asp-validation-for="Patronymic" class="text-danger"></span>
                 </div>
-                <div class="col-md-3 mb-3">
+                <div class="col-md-3 mb-4">
                     <label asp-for="Number" class="form-label">Номер картки</label>
                     <input asp-for="Number" type="number" class="form-control" />
                     <span asp-validation-for="Number" class="text-danger"></span>

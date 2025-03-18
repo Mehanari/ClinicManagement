@@ -6,6 +6,7 @@ using ClinicManagement.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ClinicManagement.Controllers
 {
@@ -126,8 +127,42 @@ namespace ClinicManagement.Controllers
         [HttpGet]
         public IActionResult ViewMedicalCard(int id)
         {
-            // Заглушка для перегляду медичної картки
-            return Content($"Перегляд медичної картки №{id} (заглушка)");
+            var medicalCard = _context.MedicalCards
+                .FirstOrDefault(mc => mc.Number == id);
+            
+            if (medicalCard == null)
+            {
+                return NotFound();
+            }
+
+            var appointments = _context.Appointments
+                .Include(a => a.DoctorSpeciality)
+                .Where(a => a.CardNumber == id)
+                .ToList();
+
+            var appointmentResults = _context.AppointmentResults
+                .Include(ar => ar.Appointment)
+                .Include(ar => ar.Doctor)
+                .ThenInclude(d => d.Speciality)
+                .Where(ar => ar.Appointment.CardNumber == id)
+                .ToList();
+
+            var personalInfo = _context.PersonalInfos.FirstOrDefault(pi => pi.Id == medicalCard.PersonalInfoId);
+            
+            if (personalInfo == null)
+            {
+                return NotFound();
+            }
+            
+            var model = new ViewMedicalCardViewModel
+            {
+                MedicalCard = medicalCard,
+                Appointments = appointments,
+                AppointmentResults = appointmentResults,
+                PersonalInfo = personalInfo
+            };
+
+            return View(model);
         }
     }
 }

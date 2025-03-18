@@ -1,0 +1,116 @@
+﻿@model ClinicManagement.Models.ViewModels.ViewMedicalCardViewModel
+
+@{
+    ViewData["Title"] = $"Перегляд медичної картки №{Model.MedicalCard.Number}";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <h2 class="mb-4">Медична картка №@Model.MedicalCard.Number</h2>
+
+            <!-- Секція: Загальна інформація -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>Загальна інформація</h4>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-3">ПІБ</dt>
+                        <dd class="col-sm-9">
+                            @($"{Model.PersonalInfo.Surname} {Model.PersonalInfo.Name} {Model.PersonalInfo.Patronymic}")
+                        </dd>
+                        <dt class="col-sm-3">Місце роботи</dt>
+                        <dd class="col-sm-9">@Model.MedicalCard.Workplace</dd>
+                        <dt class="col-sm-3">Адреса</dt>
+                        <dd class="col-sm-9">@Model.MedicalCard.Address</dd>
+                        <dt class="col-sm-3">Email</dt>
+                        <dd class="col-sm-9">@Model.MedicalCard.Email</dd>
+                        <dt class="col-sm-3">Телефон</dt>
+                        <dd class="col-sm-9">@Model.MedicalCard.Phone</dd>
+                        <dt class="col-sm-3">Останній діагноз</dt>
+                        <dd class="col-sm-9">@(Model.MedicalCard.LastDiagnosis ?? "Немає")</dd>
+                    </dl>
+                </div>
+            </div>
+
+            <!-- Секція: Таблиця результатів прийомів -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>Результати прийомів</h4>
+                </div>
+                <div class="card-body">
+                    @if (Model.AppointmentResults.Any())
+                    {
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Дата</th>
+                                    <th>Лікар</th>
+                                    <th>Спеціальність</th>
+                                    <th>Діагноз</th>
+                                    <th>Причина</th>
+                                    <th>Висновок</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var result in Model.AppointmentResults.OrderByDescending(ar => ar.Appointment.StartTime))
+                                {
+                                    <tr>
+                                        <td>@result.Appointment.StartTime.ToString("dd.MM.yyyy HH:mm")</td>
+                                        <td>@(result.Doctor != null ? $"{result.Doctor.Id}" : "Невідомо")</td>
+                                        <td>@(result.Doctor?.Speciality?.Name ?? "Невідомо")</td>
+                                        <td>@result.Diagnosis</td>
+                                        <td>@result.Reason</td>
+                                        <td>@result.Conclusion</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <p class="text-muted">Результати прийомів відсутні.</p>
+                    }
+                </div>
+            </div>
+
+            <!-- Секція: Таблиця записів на прийом -->
+            <div class="card">
+                <div class="card-header">
+                    <h4>Записи на прийом</h4>
+                </div>
+                <div class="card-body">
+                    @if (Model.Appointments.Any())
+                    {
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Початок</th>
+                                    <th>Кінець</th>
+                                    <th>Спеціальність</th>
+                                    <th>Кабінет</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var appointment in Model.Appointments.OrderBy(a => a.StartTime))
+                                {
+                                    <tr>
+                                        <td>@appointment.StartTime.ToString("dd.MM.yyyy HH:mm")</td>
+                                        <td>@appointment.EndTime.ToString("dd.MM.yyyy HH:mm")</td>
+                                        <td>@appointment.DoctorSpeciality.Name</td>
+                                        <td>@appointment.RoomNumber</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <p class="text-muted">Записи на прийом відсутні.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

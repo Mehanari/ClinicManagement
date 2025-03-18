@@ -17,6 +17,6 @@ public partial class MedicalCard
     public string? LastDiagnosis { get; set; }
 
     public int IdentificationId { get; set; }
-
+    
     public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
 }

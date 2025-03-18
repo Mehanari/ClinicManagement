@@ -49,7 +49,11 @@
                 <th>Початок</th>
                 <th>Кінець</th>
                 <th>Кабінет</th>
-                <th>Дії</th>
+                @if (showEditButton)
+                {
+                    <th>Дії</th>
+
+                }
             </tr>
         </thead>
         <tbody>
@@ -62,12 +66,13 @@
                     <td>@appointment.StartTime.ToString("dd.MM.yyyy HH:mm")</td>
                     <td>@appointment.EndTime.ToString("dd.MM.yyyy HH:mm")</td>
                     <td>@appointment.RoomNumber</td>
-                    <td>
-                        @if (showEditButton)
-                        {
+                    @if (showEditButton)
+                    {
+                        <td>
                             <a class="btn btn-sm btn-warning" asp-action="EditAppointment" asp-controller="Registrar" asp-route-id="@appointment.Id">Перенести</a>
-                        }
-                    </td>
+
+                        </td>
+                    }
                 </tr>
             }
         </tbody>

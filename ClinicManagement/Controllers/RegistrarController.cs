@@ -4,6 +4,7 @@ using ClinicManagement.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ClinicManagement.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace ClinicManagement.Controllers
 {
