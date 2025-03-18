@@ -17,6 +17,8 @@ builder.Services.AddDbContext<MyDbContext>(options =>
         ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))));
 // Реєстрація сервісу
 builder.Services.AddScoped<IMedicalCardService, MedicalCardService>();
+builder.Services.AddScoped<IScheduleService, ScheduleService>();
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())

@@ -31,7 +31,19 @@
                                 <a class="nav-link" asp-action="Profile" asp-controller="Account">Профіль</a>
                             </li>
                         }
-                        else if (role == "Лікар" || role == "Медична сестра" || role == "Адміністратор")
+                        else if (role == "Лікар")
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-action="" asp-controller="">Пошук медичних карток</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-action="" asp-controller="">Перегляд графіку</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-action="Profile" asp-controller="Account">Профіль</a>
+                            </li>
+                        }
+                        else if(role == "Медична сестра" || role == "Адміністратор")
                         {
                             <li class="nav-item">
                                 <a class="nav-link disabled" tabindex="-1" aria-disabled="true">Навігація для @role (заглушка)</a>
@@ -41,7 +53,7 @@
                         {
                             <li class="nav-item">
                                 <a class="nav-link disabled" tabindex="-1" aria-disabled="true">Невідома роль</a>
-                            </li>
+                            </li>    
                         }
                     </ul>
                 </div>

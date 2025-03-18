@@ -4,7 +4,6 @@ using ClinicManagement.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ClinicManagement.Services;
-using Microsoft.EntityFrameworkCore;
 
 namespace ClinicManagement.Controllers
 {
@@ -13,11 +12,13 @@ namespace ClinicManagement.Controllers
     {
         private readonly MyDbContext _context;
         private readonly IMedicalCardService _medicalCardService;
+        private readonly IScheduleService _scheduleService;
 
-        public RegistrarController(MyDbContext context, IMedicalCardService medicalCardService)
+        public RegistrarController(MyDbContext context, IMedicalCardService medicalCardService, IScheduleService scheduleService)
         {
             _context = context;
             _medicalCardService = medicalCardService;
+            _scheduleService = scheduleService;
         }
 
         [HttpGet]
@@ -127,87 +128,19 @@ namespace ClinicManagement.Controllers
         }
 
         [HttpGet]
-        public IActionResult ViewSchedule()
+        public async Task<IActionResult> ViewSchedule()
         {
             var model = new ViewScheduleViewModel();
-            var query = _context.Appointments
-                .Include(a => a.DoctorSpeciality)
-                .Join(_context.MedicalCards,
-                    a => a.CardNumber,
-                    mc => mc.Number,
-                    (a, mc) => new { Appointment = a, MedicalCard = mc })
-                .Join(_context.PersonalInfos,
-                    x => x.MedicalCard.PersonalInfoId,
-                    pi => pi.Id,
-                    (res, pi) => new { res.Appointment, res.MedicalCard, PersonalInfo = pi });
-
-            var results = query.ToList();
-            model.Appointments = results.Select(x => x.Appointment).ToList();
-            var medicalCards = results.Select(x => x.MedicalCard).ToList();
-            var personalInfos = results.Select(x => x.PersonalInfo).ToList();
-
-            ViewData["PersonalInfos"] = GetPersonalInfosDict(model.Appointments, medicalCards, personalInfos);
-            ViewData["DoctorSpecialities"] = _context.DoctorSpecialities.ToList();
-            return View(model);
+            return View(await _scheduleService.GetSchedule(model, _context));
         }
 
         [HttpPost]
-        public IActionResult ViewSchedule(ViewScheduleViewModel model)
+        public async Task<IActionResult> ViewSchedule(ViewScheduleViewModel model)
         {
-            var query = _context.Appointments
-                .Include(a => a.DoctorSpeciality)
-                .Join(_context.MedicalCards,
-                    a => a.CardNumber,
-                    mc => mc.Number,
-                    (a, mc) => new { Appointment = a, MedicalCard = mc })
-                .Join(_context.PersonalInfos,
-                    x => x.MedicalCard.PersonalInfoId,
-                    pi => pi.Id,
-                    (x, pi) => new { x.Appointment, x.MedicalCard, PersonalInfo = pi })
-                .AsQueryable();
-            
-
-            if (model.FilterDate.HasValue)
-            {
-                var filterDate = model.FilterDate.Value.Date;
-                query = query.Where(x => x.Appointment.StartTime.Date == filterDate);
-            }
-
-            if (model.FilterSpecialityId.HasValue)
-            {
-                query = query.Where(x => x.Appointment.DoctorSpecialityId == model.FilterSpecialityId.Value);
-            }
-
-            var result = query.ToList();
-            var medicalCards = result.Select(x => x.MedicalCard).ToList();
-            var personalInfos = result.Select(x => x.PersonalInfo).ToList();
-            var appointments = result.Select(x => x.Appointment).ToList();
-            var dict = GetPersonalInfosDict(appointments, medicalCards, personalInfos);
-            model.Appointments = appointments;
-            ViewData["PersonalInfos"] = dict;
-            ViewData["DoctorSpecialities"] = _context.DoctorSpecialities.ToList();
-            return View(model);
+            return View(await _scheduleService.GetSchedule(model, _context));
         }
 
-        private Dictionary<int, PersonalInfo> GetPersonalInfosDict(List<Appointment> appointments,
-            List<MedicalCard> medicalCards, List<PersonalInfo> personalInfos)
-        {
-            var dict = new Dictionary<int, PersonalInfo>();
-            foreach (var appointment in appointments)
-            {
-                var medicalCard = medicalCards.FirstOrDefault(m => m.Number == appointment.CardNumber);
-                if (medicalCard is null)
-                {
-                    continue;
-                }
-                var personalInfo = personalInfos
-                    .First(p => p.Id == medicalCard.PersonalInfoId);
-                var cardNumber = appointment.CardNumberNavigation.Number;
-                dict.TryAdd(cardNumber, personalInfo);
-            }
 
-            return dict;
-        }
 
         [HttpGet]
         public IActionResult EditAppointment(int id)
