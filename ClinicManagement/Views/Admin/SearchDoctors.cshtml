@@ -1,0 +1,84 @@
+﻿@model ClinicManagement.Models.ViewModels.SearchDoctorViewModel
+
+@{
+    ViewData["Title"] = "Пошук лікарів";
+    var showEditButton = true; // Assuming admin always has edit rights; adjust based on logic if needed
+}
+
+<div class="card">
+    <div class="card-body">
+        <form asp-controller="Admin" asp-action="SearchDoctors" method="post">
+            <div class="row">
+                <div class="col-md-3 mb-4">
+                    <label asp-for="Name" class="form-label">Ім’я</label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <label asp-for="Surname" class="form-label">Прізвище</label>
+                    <input asp-for="Surname" class="form-control" />
+                    <span asp-validation-for="Surname" class="text-danger"></span>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <label asp-for="Patronymic" class="form-label">По батькові</label>
+                    <input asp-for="Patronymic" class="form-control" />
+                    <span asp-validation-for="Patronymic" class="text-danger"></span>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <label asp-for="SpecialityId" class="form-label">Спеціальність</label>
+                    <select asp-for="SpecialityId" class="form-control" asp-items="@(new SelectList(Model.Specialities, "Id", "Name"))">
+                        <option value="">Всі спеціальності</option>
+                    </select>
+                    <span asp-validation-for="SpecialityId" class="text-danger"></span>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Пошук</button>
+        </form>
+    </div>
+</div>
+
+@if (Model.Results.Any())
+{
+    <table class="table table-striped mt-3">
+        <thead>
+            <tr>
+                <th>Ім’я</th>
+                <th>Прізвище</th>
+                <th>По батькові</th>
+                <th>Спеціальність</th>
+                @if (showEditButton)
+                {
+                    <th>Дії</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var doctor in Model.Results)
+            {
+                var personalInfo = Model.PersonalInfos.ContainsKey(doctor.PersonalInfoId) ? Model.PersonalInfos[doctor.PersonalInfoId] : null;
+                <tr>
+                    <td>@(personalInfo?.Name ?? "Невідомо")</td>
+                    <td>@(personalInfo?.Surname ?? "Невідомо")</td>
+                    <td>@(personalInfo?.Patronymic ?? "Невідомо")</td>
+                    <td>@doctor.SpecialityName</td>
+                    @if (showEditButton)
+                    {
+                        <td>
+                            <a class="btn btn-sm btn-primary" asp-controller="Admin" asp-action="EditDoctor" asp-route-id="@doctor.UserId">Редагувати</a>
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else if (!string.IsNullOrEmpty(Model.Name) || !string.IsNullOrEmpty(Model.Surname) || !string.IsNullOrEmpty(Model.Patronymic) || Model.SpecialityId.HasValue)
+{
+    <div class="alert alert-info mt-3" role="alert">
+        Лікарів не знайдено.
+    </div>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
